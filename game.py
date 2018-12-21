@@ -42,7 +42,7 @@ class Board(object):
     def __init__(self, width, height):
         self.width = width
         self.height = height
-        self.board = [[0 for x in range(width)] for y in range(height)]
+        self.board = np.zeros((height, width), dtype = int)
 
     def __str__(self):
         frame = "+ " + "- " * self.width + "+\n"
@@ -73,8 +73,12 @@ class Board(object):
     def cell(self, r, c):
         return self.board[r][c]
 
-    def copy(self, board):
-        for ridx, row in enumerate(self.board):
-            for cidx, cell in enumerate(row):
-                self.board[ridx][cidx] = board.cell(ridx, cidx)
+    def copy(self, otherBoard):
+        self.board = otherBoard.board.copy()
+
+    def addShape(self, shape, x, y):
+        pos_r, pos_c = self.pos(x, y)
+        for off_y, row in enumerate(shape.asList()):
+            for off_x, cell in enumerate(row):
+                r, c = pos_r 
 
