@@ -59,3 +59,12 @@ class Board(object):
         string += "\n"
         return string
 
+    def __eq__(self, other):
+        if self is other:
+            return True
+        elif type(self) != type(other):
+            return False
+        else:
+            return self.board == other.board
+
+
