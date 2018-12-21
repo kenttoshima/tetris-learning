@@ -67,4 +67,14 @@ class Board(object):
         else:
             return self.board == other.board
 
+    def pos(self, x=0, y=0):
+        return self.height - y, x - 1
+
+    def cell(self, r, c):
+        return self.board[r][c]
+
+    def copy(self, board):
+        for ridx, row in enumerate(self.board):
+            for cidx, cell in enumerate(row):
+                self.board[ridx][cidx] = board.cell(ridx, cidx)
 
