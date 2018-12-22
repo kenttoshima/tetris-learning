@@ -2,6 +2,8 @@
 ### TETRIS FRAMEWORK ###
 ########################
 
+import numpy as np
+
 SHAPE_TYPES = [
         [[0]],
 
@@ -80,5 +82,5 @@ class Board(object):
         pos_r, pos_c = self.pos(x, y)
         for off_y, row in enumerate(shape.asList()):
             for off_x, cell in enumerate(row):
-                r, c = pos_r 
+                r, c = pos_r
 
