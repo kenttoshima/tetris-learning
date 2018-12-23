@@ -98,8 +98,8 @@ class Board(object):
     def copy(self, otherBoard):
         self.board = otherBoard.board.copy()
 
-    def addShape(self, shape, x, y):
+    def addShape(self, block, x, y):
         pos_r, pos_c = self.pos(x, y)
-        frame = self.board[pos_r - shape.height + 1 : pos_r + 1, pos_c : pos_c + shape.width]
-        self.board[pos_r-shape.height + 1 : pos_r + 1, pos_c : pos_c + shape.width] = np.where(frame == 0, shape.shape, frame)
+        frame = self.board[pos_r - block.height + 1 : pos_r + 1, pos_c : pos_c + block.width]
+        self.board[pos_r - block.height + 1 : pos_r + 1, pos_c : pos_c + block.width] = np.where(frame == 0, block.block, frame)
 
