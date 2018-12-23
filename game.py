@@ -98,8 +98,12 @@ class Board(object):
     def copy(self, otherBoard):
         self.board = otherBoard.board.copy()
 
-    def addShape(self, block, x, y):
+    def addBlock(self, block, x, y):
         pos_r, pos_c = self.pos(x, y)
         frame = self.board[pos_r - block.height + 1 : pos_r + 1, pos_c : pos_c + block.width]
         self.board[pos_r - block.height + 1 : pos_r + 1, pos_c : pos_c + block.width] = np.where(frame == 0, block.block, frame)
 
+    def removeRow(self, idx_r):
+        self.board = np.delete(self.board, idx_r, 0)
+        adding_row = np.zeros((1, self.width), dtype = int)
+        self.board = np.vstack((adding_row, self.board))
