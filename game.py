@@ -40,24 +40,24 @@ class CollisionError(Error):
     def __str__(self):
         return (repr(self.rowidx), repr(self.colidx))
 
-class Shape(object):
+class Block(object):
     def __init__(self, shape_type):
         self.shape_type = shape_type
-        self.shape = np.array(SHAPE_TYPES[shape_type])
-        self.height, self.width = self.shape.shape
+        self.block = np.array(SHAPE_TYPES[shape_type], dtype = int)
+        self.height, self.width = self.block.shape
         self.rotate = 0
 
     def __str__(self):
         string = ""
-        for r in range(self.shape_height):
-            for c in range(self.shape_width):
-                string += " " + str(self.shape[r][c] if self.shape[r][c] else " ") 
+        for r in range(self.height):
+            for c in range(self.width):
+                string += " " + str(self.block[r][c] if self.block[r][c] else " ") 
             string += "\n"
         return string
         
     def rotate(self, num):
-        self.shape = np.rot90(self.shape, k = num)
-        self.shape_height, self.shape_width = self.shape.shape
+        self.block = np.rot90(self.block, k = num)
+        self.height, self.width = self.block.shape
         self.rotate = num % 4
 
 class Board(object):
@@ -77,7 +77,7 @@ class Board(object):
         string += frame
         string += " "
         for i in range(1, self.width + 1):
-            string += str(i) + " "
+            string += " " + str(i)
         string += "\n"
         return string
 
@@ -100,6 +100,6 @@ class Board(object):
 
     def addShape(self, shape, x, y):
         pos_r, pos_c = self.pos(x, y)
-        frame = self.board[pos_r-shape.height+1:pos_r+1, pos_c:pos_c+shape.width]
-        self.board[pos_r-shape.height+1:pos_r+1, pos_c:pos_c+shape.width] = np.where(frame == 0, shape.shape, frame)
+        frame = self.board[pos_r - shape.height + 1 : pos_r + 1, pos_c : pos_c + shape.width]
+        self.board[pos_r-shape.height + 1 : pos_r + 1, pos_c : pos_c + shape.width] = np.where(frame == 0, shape.shape, frame)
 
