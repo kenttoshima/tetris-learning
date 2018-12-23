@@ -68,7 +68,7 @@ class Board(object):
 
     def __str__(self):
         frame = "+ " + "- " * self.width + "+\n"
-        string += frame
+        string = frame
         for i, row in enumerate(self.board):
             string += "|"
             for cell in row:
@@ -100,6 +100,9 @@ class Board(object):
 
     def addShape(self, shape, x, y):
         pos_r, pos_c = self.pos(x, y)
-        self.board[pos_r:pos_r+shape.shape_height-1, pos_c:pos_c+shape.shape_width-1] = pass
-        
+        frame = self.board[pos_r-shape.shape_height+1:pos_r+1, pos_c:pos_c+shape.shape_width]
+        print(frame.shape)
+        print(shape.shape.shape)
+        self.board[pos_r-shape.shape_height+1:pos_r+1, pos_c:pos_c+shape.shape_width] = np.where(frame == 0, shape.shape, frame)
+        print(np.where(frame == 0, shape.shape, frame))
 
