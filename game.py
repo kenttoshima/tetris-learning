@@ -40,6 +40,13 @@ class CollisionError(Error):
     def __str__(self):
         return (repr(self.rowidx), repr(self.colidx))
 
+class Shape(object):
+    def __init__(self, shape_type):
+        self.shape_type = shape_type
+        self.shape = np.array(SHAPE_TYPES[shape_type])
+        self.shape_height, self.shape_width = self.shape.shape
+
+
 class Board(object):
     def __init__(self, width, height):
         self.width = width
@@ -80,7 +87,5 @@ class Board(object):
 
     def addShape(self, shape, x, y):
         pos_r, pos_c = self.pos(x, y)
-        for off_y, row in enumerate(shape.asList()):
-            for off_x, cell in enumerate(row):
-                r, c = pos_r
+        pass
 
