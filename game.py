@@ -45,7 +45,20 @@ class Shape(object):
         self.shape_type = shape_type
         self.shape = np.array(SHAPE_TYPES[shape_type])
         self.shape_height, self.shape_width = self.shape.shape
+        self.rotate = 0
 
+    def __str__(self):
+        string = ""
+        for r in range(self.shape_height):
+            for c in range(self.shape_width):
+                string += " " + str(self.shape[r][c] if self.shape[r][c] else " ") 
+            string += "\n"
+        return string
+        
+    def rotate(self, num):
+        self.shape = np.rot90(self.shape, k = num)
+        self.shape_height, self.shape_width = self.shape.shape
+        self.rotate = num % 4
 
 class Board(object):
     def __init__(self, width, height):
