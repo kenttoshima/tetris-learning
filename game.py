@@ -100,5 +100,6 @@ class Board(object):
 
     def addShape(self, shape, x, y):
         pos_r, pos_c = self.pos(x, y)
-        pass
+        self.board[pos_r:pos_r+shape.shape_height-1, pos_c:pos_c+shape.shape_width-1] = pass
+        
 
