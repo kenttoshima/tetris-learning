@@ -44,7 +44,7 @@ class Shape(object):
     def __init__(self, shape_type):
         self.shape_type = shape_type
         self.shape = np.array(SHAPE_TYPES[shape_type])
-        self.shape_height, self.shape_width = self.shape.shape
+        self.height, self.width = self.shape.shape
         self.rotate = 0
 
     def __str__(self):
@@ -100,6 +100,6 @@ class Board(object):
 
     def addShape(self, shape, x, y):
         pos_r, pos_c = self.pos(x, y)
-        frame = self.board[pos_r-shape.shape_height+1:pos_r+1, pos_c:pos_c+shape.shape_width]
-        self.board[pos_r-shape.shape_height+1:pos_r+1, pos_c:pos_c+shape.shape_width] = np.where(frame == 0, shape.shape, frame)
+        frame = self.board[pos_r-shape.height+1:pos_r+1, pos_c:pos_c+shape.width]
+        self.board[pos_r-shape.height+1:pos_r+1, pos_c:pos_c+shape.width] = np.where(frame == 0, shape.shape, frame)
 
