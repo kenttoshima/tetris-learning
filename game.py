@@ -33,32 +33,32 @@ class Error(Exception):
     pass
 
 class CollisionError(Error):
-    def __init__(self, r, c):
-        self.rowidx = r
-        self.colidx = c
+    def __init__(self, x, y):
+        self.x = x
+        self.y = y
 
     def __str__(self):
-        return (repr(self.rowidx), repr(self.colidx))
+        return "Collides at " + str((self.x, self.y))
 
 class Block(object):
     def __init__(self, shape_type):
         self.shape_type = shape_type
         self.block = np.array(SHAPE_TYPES[shape_type], dtype = int)
         self.height, self.width = self.block.shape
-        self.rotate = 0
+        self.rotation = 0
 
     def __str__(self):
         string = ""
         for r in range(self.height):
             for c in range(self.width):
-                string += " " + str(self.block[r][c] if self.block[r][c] else " ") 
+                string += " " + str(self.block[r][c] if self.block[r][c] else " ")
             string += "\n"
         return string
-        
+
     def rotate(self, num):
         self.block = np.rot90(self.block, k = num)
         self.height, self.width = self.block.shape
-        self.rotate = num % 4
+        self.rotation = (self.rotation + num) % 4
 
 class Board(object):
     def __init__(self, width, height):
@@ -98,9 +98,19 @@ class Board(object):
     def copy(self, otherBoard):
         self.board = otherBoard.board.copy()
 
+    def hasCollision(self, board_array, block_array, pos_r, pos_c):
+        board_collision = (board_array != 0)
+        block_collision = (block_array != 0)
+        collisionIdx = np.where(np.logical_and(board_collision, block_collision))
+        # return np.logical_and(board_collision, block_collision).any()
+        return collisionIdx if !collisionIdx.size else None
+
     def addBlock(self, block, x, y):
+        if x < 1 or self.width < x + block.width - 1:
+            raise CollisionError(x, y)
         pos_r, pos_c = self.pos(x, y)
         frame = self.board[pos_r - block.height + 1 : pos_r + 1, pos_c : pos_c + block.width]
+        if self.hasCollision(frame, block.block, pos_r, pos_c):
         self.board[pos_r - block.height + 1 : pos_r + 1, pos_c : pos_c + block.width] = np.where(frame == 0, block.block, frame)
 
     def removeRow(self, idx_r):
