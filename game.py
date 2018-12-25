@@ -35,10 +35,10 @@ class Error(Exception):
 class BoardError(Error):
     def __init__(self, arg):
         self.arg = arg
-        if type(self.arg) == 'numpy.ndarray':
-            self.string = "Collides at "
+        if isinstance(self.arg, np.ndarray):
+            self.string = "Collides at \n"
         else:
-            self.string = "Out of frame at "
+            self.string = "Out of frame at \n"
 
     def __str__(self):
         return self.string + str(self.arg)
@@ -105,15 +105,14 @@ class Board(object):
         board_collision = (board_array != 0)
         block_collision = (block_array != 0)
         collisionIdxX, collisionIdxY = np.where(np.logical_and(board_collision, block_collision))
-        collisionIdxArray = np.dstack((collisionIdxX, collisionIdxY))
-        return collisionIdxArray if collisionIdxArray.size != 0 else None
+        return np.dstack((collisionIdxX, collisionIdxY))
 
     def addBlock(self, block, x, y):
         if x < 1 or self.width < x + block.width - 1 or y < 1 or self.height < y + block.height - 1:
             raise BoardError((x, y))
         pos_r, pos_c = self.pos(x, y)
         frame = self.board[pos_r - block.height + 1 : pos_r + 1, pos_c : pos_c + block.width]
-        if self.hasCollision(frame, block.block, pos_r, pos_c) == None:
+        if self.hasCollision(frame, block.block, pos_r, pos_c).size == 0:
             self.board[pos_r - block.height + 1 : pos_r + 1, pos_c : pos_c + block.width] = np.where(frame == 0, block.block, frame)
         else:
             raise BoardError(self.hasCollision(frame, block.block, pos_r, pos_c))
