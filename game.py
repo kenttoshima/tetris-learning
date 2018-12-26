@@ -117,11 +117,11 @@ class Board(object):
         else:
             raise BoardError(self.hasCollision(frame, block.block, pos_r, pos_c))
 
-    def removeRow(self, idx_r_array):
-        self.board = np.delete(self.board, idx_r_array, axis=0)
-        adding_row = np.zeros((idx_r_array.size, self.width), dtype = int)
+    def removeFilledRow(self):
+        filledRowIdx = np.where(np.all(self.board != 0, axis=1))[0]
+        self.board = np.delete(self.board, filledRowIdx, axis=0)
+        numRemovedRow = filledRowIdx.size
+        adding_row = np.zeros((numRemovedRow, self.width), dtype = int)
         self.board = np.vstack((adding_row, self.board))
-        return idx_r_array.size
+        return numRemovedRow 
 
-    def filledRow(self):
-        return np.all(self.board != 0, axis=1) 
