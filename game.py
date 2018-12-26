@@ -98,8 +98,8 @@ class Board(object):
     def cell(self, r, c):
         return self.board[r][c]
 
-    def copy(self, otherBoard):
-        self.board = otherBoard.board.copy()
+    def copy(self, copyBoard):
+        self.board = copyBoard.board.copy()
 
     def hasCollision(self, board_array, block_array, pos_r, pos_c):
         board_collision = (board_array != 0)
@@ -121,3 +121,7 @@ class Board(object):
         self.board = np.delete(self.board, idx_r_array, axis=0)
         adding_row = np.zeros((idx_r_array.size, self.width), dtype = int)
         self.board = np.vstack((adding_row, self.board))
+        return idx_r_array.size
+
+    def filledRow(self):
+        return np.all(self.board != 0, axis=1) 
