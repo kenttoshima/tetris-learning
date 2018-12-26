@@ -98,6 +98,7 @@ class Board(object):
     def cell(self, r, c):
         return self.board[r][c]
 
+    # copy given board to self
     def copy(self, copyBoard):
         self.board = copyBoard.board.copy()
 
@@ -107,6 +108,7 @@ class Board(object):
         collisionIdxX, collisionIdxY = np.where(np.logical_and(board_collision, block_collision))
         return np.dstack((collisionIdxX, collisionIdxY))
 
+    # add given block object to (x, y) on the board
     def addBlock(self, block, x, y):
         if x < 1 or self.width < x + block.width - 1 or y < 1 or self.height < y + block.height - 1:
             raise BoardError((x, y))
@@ -116,7 +118,8 @@ class Board(object):
             self.board[pos_r - block.height + 1 : pos_r + 1, pos_c : pos_c + block.width] = np.where(frame == 0, block.block, frame)
         else:
             raise BoardError(self.hasCollision(frame, block.block, pos_r, pos_c))
-
+    
+    # remove filled rows and return the number of removed rows
     def removeFilledRow(self):
         filledRowIdx = np.where(np.all(self.board != 0, axis=1))[0]
         self.board = np.delete(self.board, filledRowIdx, axis=0)
@@ -124,4 +127,10 @@ class Board(object):
         adding_row = np.zeros((numRemovedRow, self.width), dtype = int)
         self.board = np.vstack((adding_row, self.board))
         return numRemovedRow 
+
+class Config(Board):
+    def __init__(self, width, height):
+        super(Config, self).__init__(width, height)
+
+    
 
