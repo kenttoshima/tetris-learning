@@ -36,9 +36,9 @@ class BoardError(Error):
     def __init__(self, arg):
         self.arg = arg
         if isinstance(self.arg, np.ndarray):
-            self.string = "Collides at \n"
+            self.string = "Collides at (row, column)\n"
         else:
-            self.string = "Out of frame at \n"
+            self.string = "Out of frame at (row, column)\n"
 
     def __str__(self):
         return self.string + str(self.arg)
@@ -92,8 +92,11 @@ class Board(object):
         else:
             return self.board == other.board
 
-    def pos(self, x=0, y=0):
+    def xytorc(self, x=1, y=1):
         return self.height - y, x - 1
+
+    def rctoxy(self, r=0, c=0):
+        return c + 1, self.height - r
 
     def cell(self, r, c):
         return self.board[r][c]
@@ -102,22 +105,24 @@ class Board(object):
     def copy(self, copyBoard):
         self.board = copyBoard.board.copy()
 
-    def hasCollision(self, board_array, block_array):
+    def hasCollision(self, board_array, block, pos_r, pos_c):
         board_collision = (board_array != 0)
-        block_collision = (block_array != 0)
-        collisionIdxX, collisionIdxY = np.where(np.logical_and(board_collision, block_collision))
-        return np.dstack((collisionIdxX, collisionIdxY))
+        block_collision = (block.block != 0)
+        local_idx_r, local_idx_c = np.where(np.logical_and(board_collision, block_collision))
+        print(pos_r, pos_c)
+        print(local_idx_r, local_idx_c)
+        return np.dstack((block.height - local_idx_r - 1 + pos_r, local_idx_c + pos_c))
 
     # add given block object to (x, y) on the board
     def addBlock(self, block, x, y):
+        pos_r, pos_c = self.xytorc(x, y)
         if x < 1 or self.width < x + block.width - 1 or y < 1 or self.height < y + block.height - 1:
-            raise BoardError((x, y))
-        pos_r, pos_c = self.pos(x, y)
+            raise BoardError((pos_r, pos_c))
         frame = self.board[pos_r - block.height + 1 : pos_r + 1, pos_c : pos_c + block.width]
-        if self.hasCollision(frame, block.block).size == 0:
+        if self.hasCollision(frame, block, pos_r, pos_c).size == 0:
             self.board[pos_r - block.height + 1 : pos_r + 1, pos_c : pos_c + block.width] = np.where(frame == 0, block.block, frame)
         else:
-            raise BoardError(self.hasCollision(frame, block.block))
+            raise BoardError(self.hasCollision(frame, block, pos_r, pos_c))
 
     # remove filled rows and return the number of removed rows
     def removeFilledRow(self):
