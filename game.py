@@ -36,9 +36,9 @@ class BoardError(Error):
     def __init__(self, arg):
         self.arg = arg
         if isinstance(self.arg, np.ndarray):
-            self.string = "Collides at (row, column)\n"
+            self.string = "Collides at\n"
         else:
-            self.string = "Out of frame at (row, column)\n"
+            self.string = "Out of frame at\n"
 
     def __str__(self):
         return self.string + str(self.arg)
