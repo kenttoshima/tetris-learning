@@ -111,13 +111,13 @@ class Board(object):
         local_idx_r, local_idx_c = np.where(np.logical_and(board_collision, block_collision))
         print(pos_r, pos_c)
         print(local_idx_r, local_idx_c)
-        return np.dstack((block.height - local_idx_r - 1 + pos_r, local_idx_c + pos_c))
+        return np.dstack(self.rctoxy(block.height - local_idx_r - 1 + pos_r, local_idx_c + pos_c))
 
     # add given block object to (x, y) on the board
     def addBlock(self, block, x, y):
-        pos_r, pos_c = self.xytorc(x, y)
         if x < 1 or self.width < x + block.width - 1 or y < 1 or self.height < y + block.height - 1:
-            raise BoardError((pos_r, pos_c))
+            raise BoardError((x, y))
+        pos_r, pos_c = self.xytorc(x, y)
         frame = self.board[pos_r - block.height + 1 : pos_r + 1, pos_c : pos_c + block.width]
         if self.hasCollision(frame, block, pos_r, pos_c).size == 0:
             self.board[pos_r - block.height + 1 : pos_r + 1, pos_c : pos_c + block.width] = np.where(frame == 0, block.block, frame)
