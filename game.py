@@ -105,7 +105,7 @@ class Board(object):
     def copy(self, copyBoard):
         self.board = copyBoard.board.copy()
 
-    def hasCollision(self, board_array, block, pos_r, pos_c):
+    def hasCollisionAt(self, board_array, block, pos_r, pos_c):
         board_collision = (board_array != 0)
         block_collision = (block.block != 0)
         local_idx_r, local_idx_c = np.where(np.logical_and(board_collision, block_collision))
@@ -117,10 +117,11 @@ class Board(object):
             raise BoardError((x, y))
         pos_r, pos_c = self.xytorc(x, y)
         frame = self.board[pos_r - block.height + 1 : pos_r + 1, pos_c : pos_c + block.width]
-        if self.hasCollision(frame, block, pos_r, pos_c).size == 0:
+        collisionLocations = self.hasCollisionAt(frame, block, pos_r, pos_c)
+        if collisionLocations.size == 0:
             self.board[pos_r - block.height + 1 : pos_r + 1, pos_c : pos_c + block.width] = np.where(frame == 0, block.block, frame)
         else:
-            raise BoardError(self.hasCollision(frame, block, pos_r, pos_c))
+            raise BoardError(collisionLocations)
 
     # remove filled rows and return the number of removed rows
     def removeFilledRow(self):
