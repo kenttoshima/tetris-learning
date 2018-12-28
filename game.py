@@ -117,7 +117,7 @@ class Board(object):
         if self.hasCollision(frame, block.block).size == 0:
             self.board[pos_r - block.height + 1 : pos_r + 1, pos_c : pos_c + block.width] = np.where(frame == 0, block.block, frame)
         else:
-            raise BoardError(self.hasCollision(frame, block.block, pos_r, pos_c))
+            raise BoardError(self.hasCollision(frame, block.block))
 
     # remove filled rows and return the number of removed rows
     def removeFilledRow(self):
