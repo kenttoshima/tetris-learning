@@ -102,7 +102,7 @@ class Board(object):
     def copy(self, copyBoard):
         self.board = copyBoard.board.copy()
 
-    def hasCollision(self, board_array, block_array, pos_r, pos_c):
+    def hasCollision(self, board_array, block_array):
         board_collision = (board_array != 0)
         block_collision = (block_array != 0)
         collisionIdxX, collisionIdxY = np.where(np.logical_and(board_collision, block_collision))
@@ -114,11 +114,11 @@ class Board(object):
             raise BoardError((x, y))
         pos_r, pos_c = self.pos(x, y)
         frame = self.board[pos_r - block.height + 1 : pos_r + 1, pos_c : pos_c + block.width]
-        if self.hasCollision(frame, block.block, pos_r, pos_c).size == 0:
+        if self.hasCollision(frame, block.block).size == 0:
             self.board[pos_r - block.height + 1 : pos_r + 1, pos_c : pos_c + block.width] = np.where(frame == 0, block.block, frame)
         else:
             raise BoardError(self.hasCollision(frame, block.block, pos_r, pos_c))
-    
+
     # remove filled rows and return the number of removed rows
     def removeFilledRow(self):
         filledRowIdx = np.where(np.all(self.board != 0, axis=1))[0]
@@ -126,11 +126,11 @@ class Board(object):
         numRemovedRow = filledRowIdx.size
         adding_row = np.zeros((numRemovedRow, self.width), dtype = int)
         self.board = np.vstack((adding_row, self.board))
-        return numRemovedRow 
+        return numRemovedRow
 
 class Config(Board):
     def __init__(self, width, height):
         super(Config, self).__init__(width, height)
 
-    
-
+    def place(self, ):
+        pass
