@@ -112,7 +112,6 @@ class Board(object):
         local_idx_r, local_idx_c = np.where(np.logical_and(board_collision, block_collision))
         print(local_idx_r, local_idx_c)
         collisionLocations = np.stack(self.rctoxy(block.height - local_idx_r - 1 + pos_r, local_idx_c + pos_c), axis=0)
-        print(collisionLocations)
         return collisionLocations if collisionLocations.size != 0 else None
 
     # add given block object to (x, y) on the board
