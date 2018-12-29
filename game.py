@@ -109,7 +109,8 @@ class Board(object):
         board_collision = (board_array != 0)
         block_collision = (block.block != 0)
         local_idx_r, local_idx_c = np.where(np.logical_and(board_collision, block_collision))
-        return np.dstack(self.rctoxy(block.height - local_idx_r - 1 + pos_r, local_idx_c + pos_c))
+        collisionLocations = np.dstack(self.rctoxy(block.height - local_idx_r - 1 + pos_r, local_idx_c + pos_c))
+        return collisionLocations if collisionLocations.size != 0 else None
 
     # add given block object to (x, y) on the board
     def addBlock(self, block, x, y):
@@ -118,10 +119,10 @@ class Board(object):
         pos_r, pos_c = self.xytorc(x, y)
         frame = self.board[pos_r - block.height + 1 : pos_r + 1, pos_c : pos_c + block.width]
         collisionLocations = self.hasCollisionAt(frame, block, pos_r, pos_c)
-        if collisionLocations.size == 0:
-            self.board[pos_r - block.height + 1 : pos_r + 1, pos_c : pos_c + block.width] = np.where(frame == 0, block.block, frame)
-        else:
+        if collisionLocations is None:
             raise BoardError(collisionLocations)
+        else:
+            self.board[pos_r - block.height + 1 : pos_r + 1, pos_c : pos_c + block.width] = np.where(frame == 0, block.block, frame)
 
     # remove filled rows and return the number of removed rows
     def removeFilledRow(self):
