@@ -36,9 +36,10 @@ class BoardError(Error):
     def __init__(self, arg):
         self.arg = arg
         if isinstance(self.arg, np.ndarray):
-            self.string = "Collides at\n"
+            self.string = "Collides at "
+            self.arg = list(map(tuple, self.arg))
         else:
-            self.string = "Out of frame at\n"
+            self.string = "Out of frame when placing at "
 
     def __str__(self):
         return self.string + str(self.arg)
@@ -109,7 +110,9 @@ class Board(object):
         board_collision = (board_array != 0)
         block_collision = (block.block != 0)
         local_idx_r, local_idx_c = np.where(np.logical_and(board_collision, block_collision))
-        collisionLocations = np.dstack(self.rctoxy(block.height - local_idx_r - 1 + pos_r, local_idx_c + pos_c))
+        print(local_idx_r, local_idx_c)
+        collisionLocations = np.stack(self.rctoxy(block.height - local_idx_r - 1 + pos_r, local_idx_c + pos_c), axis=0)
+        print(collisionLocations)
         return collisionLocations if collisionLocations.size != 0 else None
 
     # add given block object to (x, y) on the board
@@ -120,9 +123,9 @@ class Board(object):
         frame = self.board[pos_r - block.height + 1 : pos_r + 1, pos_c : pos_c + block.width]
         collisionLocations = self.hasCollisionAt(frame, block, pos_r, pos_c)
         if collisionLocations is None:
-            raise BoardError(collisionLocations)
-        else:
             self.board[pos_r - block.height + 1 : pos_r + 1, pos_c : pos_c + block.width] = np.where(frame == 0, block.block, frame)
+        else:
+            raise BoardError(collisionLocations)
 
     # remove filled rows and return the number of removed rows
     def removeFilledRow(self):
