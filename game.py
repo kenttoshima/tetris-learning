@@ -98,7 +98,6 @@ class Board(object):
         return self.height - y, x - 1
 
     def rctoxy(self, r=0, c=0):
-        print(self.height, r)
         return c + 1, self.height - r
 
     def cell(self, r, c):
@@ -112,7 +111,6 @@ class Board(object):
         board_collision = (board_array != 0)
         block_collision = (block.block != 0)
         local_idx_r, local_idx_c = np.where(np.logical_and(board_collision, block_collision))
-        print(local_idx_r, local_idx_c, pos_r, pos_c)
         collisionLocations = np.dstack(self.rctoxy(pos_r - (block.height - local_idx_r - 1), local_idx_c + pos_c))[0]
         return collisionLocations if collisionLocations.size != 0 else None
 
