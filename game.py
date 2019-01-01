@@ -107,22 +107,33 @@ class Board(object):
     def copy(self, copyBoard):
         self.board = copyBoard.board.copy()
 
-    def hasCollisionAt(self, board_array, block, pos_r, pos_c):
-        board_collision = (board_array != 0)
+    def intersection(self, block, x, y):
+        pos_r, pos_c = self.xytorc(x, y)
+        return slice(pos_r - block.height + 1, pos_r + 1), slice(pos_c, pos_c + block.width)
+
+    def hasCollisionAt(self, block, x, y):
+        frame = self.board[self.intersection(block, x, y)]
+        board_collision = (frame != 0)
         block_collision = (block.block != 0)
+        pos_r, pos_c = self.xytorc(x, y)
         local_idx_r, local_idx_c = np.where(np.logical_and(board_collision, block_collision))
         collisionLocations = np.dstack(self.rctoxy(pos_r - (block.height - local_idx_r - 1), local_idx_c + pos_c))[0]
         return collisionLocations if collisionLocations.size != 0 else None
 
+    def canFallAt(self, block, x, y):
+        pass
+
     # add given block object to (x, y) on the board
     def addBlock(self, block, x, y):
-        if x < 1 or self.width < x + block.width - 1 or y < 1 or self.height < y + block.height - 1:
+        xmin, xmax = 1, self.width - block.width + 1
+        ymin, ymax = 1, self.height - block.height + 1
+        if x < xmin or xmax < x or y < ymin or ymax < y:
             raise BoardError((x, y))
+        frame = self.board[self.intersection(block, x, y)]
+        collisionLocations = self.hasCollisionAt(block, x, y)
         pos_r, pos_c = self.xytorc(x, y)
-        frame = self.board[pos_r - block.height + 1 : pos_r + 1, pos_c : pos_c + block.width]
-        collisionLocations = self.hasCollisionAt(frame, block, pos_r, pos_c)
         if collisionLocations is None:
-            self.board[pos_r - block.height + 1 : pos_r + 1, pos_c : pos_c + block.width] = np.where(frame == 0, block.block, frame)
+            self.board[self.intersection(block, x, y)] = np.where(frame == 0, block.block, frame)
         else:
             raise BoardError(collisionLocations)
 
@@ -139,5 +150,5 @@ class Config(Board):
     def __init__(self, width, height):
         super(Config, self).__init__(width, height)
 
-    def place(self, ):
+    def place(self, x):
         pass
