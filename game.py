@@ -60,7 +60,7 @@ class Block(object):
             string += "\n"
         return string
 
-    def rotate(self, num):
+    def rotate(self, num=1):
         self.block = np.rot90(self.block, k = num)
         self.height, self.width = self.block.shape
         self.rotation = (self.rotation + num) % 4
@@ -121,7 +121,8 @@ class Board(object):
         return collisionLocations if collisionLocations.size != 0 else None
 
     def canFallAt(self, block, x, y):
-        pass
+        frame = self.board[self.intersection(block, x, y)]
+        print(np.where(frame == 0, block.block, frame))
 
     # add given block object to (x, y) on the board
     def addBlock(self, block, x, y):
