@@ -120,7 +120,7 @@ class Board(object):
         collisionLocations = np.dstack(self.rctoxy(pos_r - (block.height - local_idx_r - 1), local_idx_c + pos_c))[0]
         return collisionLocations if collisionLocations.size != 0 else None
 
-    def canFallAt(self, block, x, y):
+    def canFall(self, block, x, y):
         frame = self.board[self.intersection(block, x, y)]
         print(np.where(frame == 0, block.block, frame))
 
